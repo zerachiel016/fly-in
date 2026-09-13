@@ -46,18 +46,18 @@ class MapBuilder:
             if not meta:
                 return meta
             meta = meta.split(" ")
-            _recorded_keys = []
+            _dict = {}
             for m in meta:
                 key, value = m.split("=", 1)
                 if not allowed[key](value):
                     raise
-                elif key in _recorded_keys:
+                elif key in _dict:
                     m = f"Duplicate '{key}'"
                     raise
-                _recorded_keys += [key]
+                _dict[key] = value
         except:
             raise Exception(f"Invalid Metadata: {m}")
-        return meta
+        return _dict
 
     allowed_hub_meta = {
         "zone": lambda v: v.lower() in {"normal", "blocked", "restricted", "priority"},
@@ -67,14 +67,14 @@ class MapBuilder:
 
     @staticmethod
     def handle_hub(dec: list[str]):
+        meta = {}
         if len(dec) < 4:
             raise Exception("Invalid hub parameters")
         elif len(dec) > 4:
-            dec = dec[:4] + [MapBuilder.parse_meta(" ".join(dec[4:]), MapBuilder.allowed_hub_meta)]
-        else:
-            dec += [""]
+            meta = MapBuilder.parse_meta(" ".join(dec[4:]), MapBuilder.allowed_hub_meta)
+            dec = dec[:4]
 
-        MapBuilder.map.add_hub(dec)
+        MapBuilder.map.add_hub(dec, meta)
 
     allowed_connection_meta = { "max_link_capacity": lambda v: int(v) > 0 }
 
@@ -85,7 +85,7 @@ class MapBuilder:
             raise Exception("Invalid connection parameters")
         elif len(dec) > 2:
             meta = MapBuilder.parse_meta(" ".join(dec[2:]), MapBuilder.allowed_connection_meta)
-            max_link_capacity = meta[0].split("=")[1]
+            max_link_capacity = int(meta['max_link_capacity'])
 
         if dec[1].count("-") != 1:
             raise Exception(f"Invalid connection: {dec[1]}")

@@ -2,14 +2,17 @@ class Map:
     class Hub:
         class Meta:
             def __init__(self, meta_list):
-                pass
+                self.zone = meta_list.get('zone', 'normal')
+                self.max_drones = int(meta_list.get('max_drones', '1'))
+                self.color = meta_list.get('color', 'default')
+
         def __init__(self, name, x, y, meta=None, start=False, end=False):
             if "-" in name:
                 raise Exception("Invalid hub name")
             self.name = name
             self.x = x
             self.y = y
-            self.meta = meta
+            self.meta = self.Meta(meta)
             self.start = start
             self.end = end
             self.connections = []
@@ -25,7 +28,7 @@ class Map:
             raise Exception("Duplicate nb_drones")
         self.nb_drones = v
 
-    def add_hub(self, dec: list[str]):
+    def add_hub(self, dec: list[str], meta):
         start = end = False
         if dec[0] == "start_hub:":
             if any(h.start for h in self.hubs):
@@ -39,7 +42,7 @@ class Map:
         if not all(dec[1] != h.name for h in self.hubs):
             raise Exception(f"Duplicate '{dec[1]}' hub name")
 
-        self.hubs += [Map.Hub(dec[1], int(dec[2]), int(dec[3]), dec[4], start, end)]
+        self.hubs += [Map.Hub(dec[1], int(dec[2]), int(dec[3]), meta, start, end)]
 
     def add_connection(self, hub_name, to_hub_name, max_link_capacity):
         hub1 = next((hub for hub in self.hubs if hub.name == hub_name), None)
