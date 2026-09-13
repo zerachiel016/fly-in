@@ -1,0 +1,53 @@
+class Map:
+    class Hub:
+        class Meta:
+            def __init__(self, meta_list):
+                pass
+        def __init__(self, name, x, y, meta=None, start=False, end=False):
+            if "-" in name:
+                raise Exception("Invalid hub name")
+            self.name = name
+            self.x = x
+            self.y = y
+            self.meta = meta
+            self.start = start
+            self.end = end
+            self.connections = []
+
+    def __init__(self) -> None:
+        self.nb_drones = None
+        self.hubs = []
+
+    def set_nb_drones(self, v: int):
+        if self.hubs:
+            raise Exception("nb_drones must be defined in the first line")
+        elif self.nb_drones is not None:
+            raise Exception("Duplicate nb_drones")
+        self.nb_drones = v
+
+    def add_hub(self, dec: list[str]):
+        start = end = False
+        if dec[0] == "start_hub:":
+            if any(h.start for h in self.hubs):
+                raise Exception(f"Duplicate 'start_hub'")
+            start = True
+        elif dec[0] == "end_hub:":
+            if any(h.end for h in self.hubs):
+                raise Exception(f"Duplicate 'end_hub'")
+            end = True
+
+        if not all(dec[1] != h.name for h in self.hubs):
+            raise Exception(f"Duplicate '{dec[1]}' hub name")
+
+        self.hubs += [Map.Hub(dec[1], int(dec[2]), int(dec[3]), dec[4], start, end)]
+
+    def add_connection(self, hub_name, to_hub_name, max_link_capacity):
+        hub1 = next((hub for hub in self.hubs if hub.name == hub_name), None)
+        hub2 = next((hub for hub in self.hubs if hub.name == to_hub_name), None)
+        if not hub1 or not hub2:
+            raise Exception(f"Invalid connection: '{hub_name}' or '{to_hub_name}' does not exist")
+        if any(hub2.name == hub1_con[0] for hub1_con in hub1.connections):
+            raise Exception(f"Already exisiting connection {hub_name}-{to_hub_name}")
+        hub1.connections += [(hub2.name, max_link_capacity)]
+        hub2.connections += [(hub1.name, max_link_capacity)]
+
