@@ -1,10 +1,12 @@
+from utils import Colors
+
 class Map:
     class Hub:
         class Meta:
             def __init__(self, meta_list):
                 self.zone = meta_list.get('zone', 'normal')
                 self.max_drones = int(meta_list.get('max_drones', '1'))
-                self.color = meta_list.get('color', 'default')
+                self.color = meta_list.get('color', 'white')
 
         def __init__(self, name, x, y, meta=None, start=False, end=False):
             if "-" in name:
@@ -16,6 +18,7 @@ class Map:
             self.start = start
             self.end = end
             self.connections = []
+            self.colorized = Colors.colorize(self.name, self.meta.color)
 
     def __init__(self) -> None:
         self.nb_drones = None
