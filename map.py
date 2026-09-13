@@ -33,10 +33,14 @@ class Map:
         if dec[0] == "start_hub:":
             if any(h.start for h in self.hubs):
                 raise Exception(f"Duplicate 'start_hub'")
+            if 'zone' in meta and meta['zone'] == 'blocked':
+                raise Exception("start_hub can't be a blocked zone")
             start = True
         elif dec[0] == "end_hub:":
             if any(h.end for h in self.hubs):
                 raise Exception(f"Duplicate 'end_hub'")
+            if 'zone' in meta and meta['zone'] == 'blocked':
+                raise Exception("end_hub can't be a blocked zone")
             end = True
 
         if not all(dec[1] != h.name for h in self.hubs):
