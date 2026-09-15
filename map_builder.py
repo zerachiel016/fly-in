@@ -115,9 +115,9 @@ class MapBuilder:
             except Exception as e:
                 print(f"[Line {i}] MapError:", e)
                 sys.exit(1)
-        if not any(h.start for h in MapBuilder.map.hubs):
+        if not any(h.start for h in MapBuilder.map.hubs.values()):
             print("MapError: Undefined start_hub")
-        elif not any(h.end for h in MapBuilder.map.hubs):
+        elif not any(h.end for h in MapBuilder.map.hubs.values()):
             print("MapError: Undefined end_hub")
         elif not MapBuilder.map.nb_drones:
             print("MapError: Undefined nb_drones")

@@ -22,7 +22,7 @@ class Map:
 
     def __init__(self) -> None:
         self.nb_drones = None
-        self.hubs = []
+        self.hubs = {}
 
     def set_nb_drones(self, v: int):
         if self.hubs:
@@ -34,26 +34,26 @@ class Map:
     def add_hub(self, dec: list[str], meta):
         start = end = False
         if dec[0] == "start_hub:":
-            if any(h.start for h in self.hubs):
+            if any(h.start for h in self.hubs.values()):
                 raise Exception(f"Duplicate 'start_hub'")
             if 'zone' in meta and meta['zone'] == 'blocked':
                 raise Exception("start_hub can't be a blocked zone")
             start = True
         elif dec[0] == "end_hub:":
-            if any(h.end for h in self.hubs):
+            if any(h.end for h in self.hubs.values()):
                 raise Exception(f"Duplicate 'end_hub'")
             if 'zone' in meta and meta['zone'] == 'blocked':
                 raise Exception("end_hub can't be a blocked zone")
             end = True
 
-        if not all(dec[1] != h.name for h in self.hubs):
+        if not all(dec[1] != h.name for h in self.hubs.values()):
             raise Exception(f"Duplicate '{dec[1]}' hub name")
 
-        self.hubs += [Map.Hub(dec[1], int(dec[2]), int(dec[3]), meta, start, end)]
+        self.hubs[dec[1]] = Map.Hub(dec[1], int(dec[2]), int(dec[3]), meta, start, end)
 
     def add_connection(self, hub_name, to_hub_name, max_link_capacity):
-        hub1 = next((hub for hub in self.hubs if hub.name == hub_name), None)
-        hub2 = next((hub for hub in self.hubs if hub.name == to_hub_name), None)
+        hub1 = self.hubs.get(hub_name)
+        hub2 = self.hubs.get(to_hub_name)
         if not hub1 or not hub2:
             raise Exception(f"Invalid connection: '{hub_name}' or '{to_hub_name}' does not exist")
         if any(hub2.name == hub1_con[0] for hub1_con in hub1.connections):
