@@ -2,23 +2,27 @@ from utils import Colors
 
 class Map:
     class Hub:
-        class Meta:
-            def __init__(self, meta_list):
-                self.zone = meta_list.get('zone', 'normal')
-                self.max_drones = int(meta_list.get('max_drones', '1'))
-                self.color = meta_list.get('color', 'white')
+        get_cost = {
+            'priority': 0.9,
+            'normal': 1,
+            'restricted': 2,
+            'blocked': -1,
+        }
 
-        def __init__(self, name, x, y, meta=None, start=False, end=False):
+        def __init__(self, name, x, y, meta={}, start=False, end=False):
             if "-" in name:
                 raise Exception("Invalid hub name")
             self.name = name
             self.x = x
             self.y = y
-            self.meta = self.Meta(meta)
+            self.zone = meta.get('zone', 'normal')
+            self.max_drones = int(meta.get('max_drones', '1'))
+            self.color = meta.get('color', 'white')
+            self.cost = self.get_cost[self.zone]
             self.start = start
             self.end = end
             self.connections = []
-            self.colorized = Colors.colorize(self.name, self.meta.color)
+            self.colorized = Colors.colorize(self.name, self.color)
 
     def __init__(self) -> None:
         self.nb_drones = None
