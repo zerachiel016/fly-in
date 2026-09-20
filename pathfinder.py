@@ -24,7 +24,7 @@ class Pathfinder:
             cur_cost, cur_zone = heapq.heappop(queue)
             if hubs[cur_zone].end and cur_zone:
                 return (Pathfinder.get_path_from_table(table, cur_zone), table[cur_zone][0])
-            for con in [con[0] for con in hubs[cur_zone].connections]:
+            for con in hubs[cur_zone].connections:
                 new_con_cost = cur_cost + hubs[con].cost
                 if new_con_cost < table[con][0] and hubs[con].zone != "blocked" and {con, cur_zone} != blocked_con:
                     table[con] = (new_con_cost, cur_zone)

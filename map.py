@@ -21,7 +21,7 @@ class Map:
             self.cost = self.get_cost[self.zone]
             self.start = start
             self.end = end
-            self.connections = []
+            self.connections = {}
             self.colorized = Colors.colorize(self.name, self.color)
 
     def __init__(self) -> None:
@@ -60,8 +60,8 @@ class Map:
         hub2 = self.hubs.get(to_hub_name)
         if not hub1 or not hub2:
             raise Exception(f"Invalid connection: '{hub_name}' or '{to_hub_name}' does not exist")
-        if any(hub2.name == hub1_con[0] for hub1_con in hub1.connections):
+        if (hub1.connections.get(hub2.name)):
             raise Exception(f"Already exisiting connection {hub_name}-{to_hub_name}")
-        hub1.connections += [(hub2.name, max_link_capacity)]
-        hub2.connections += [(hub1.name, max_link_capacity)]
+        hub1.connections[hub2.name] = max_link_capacity
+        hub2.connections[hub1.name] = max_link_capacity
 
