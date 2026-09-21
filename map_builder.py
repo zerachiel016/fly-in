@@ -77,6 +77,12 @@ class MapBuilder:
             meta = MapBuilder.parse_meta(" ".join(dec[4:]), MapBuilder.allowed_hub_meta)
             dec = dec[:4]
 
+        try:
+            int(dec[2])
+            int(dec[3])
+        except:
+            raise Exception(f"Invalid coordinates value: (x:{dec[2]}, y:{dec[3]})")
+
         MapBuilder.map.add_hub(dec, meta)
 
     allowed_connection_meta = { "max_link_capacity": lambda v: int(v) > 0 }
