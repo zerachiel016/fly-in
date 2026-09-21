@@ -46,13 +46,19 @@ class Sim:
             connections = _connections.copy()
             for drone in _drones:
                 if drone.pending:
+                    print(f"{drone.id}-{map.hubs[drone.cur_zone].colorized} ", end="")
                     drone.pending = False
                     continue
                 if Sim.drone_can_move(drone, connections, occupency):
                     if map.hubs[drone.next_zone()].zone == "restricted":
+                        print(f"{drone.id}-{drone.cur_zone}-{drone.next_zone()} ", end="")
                         drone.pending = True
+                    else:
+                        print(f"{drone.id}-{map.hubs[drone.next_zone()].colorized} ", end="")
                     Sim.fly_to_next(drone, connections, occupency)
+            print()
             Sim.turn = Sim.turn + 1
+        print("Total turns:", Sim.turn)
 
 
     @staticmethod
@@ -60,6 +66,6 @@ class Sim:
         main = paths[0]
         second = paths[1] if paths[1] else paths[0]
 
-        drones = [Drone(main if nd < map.nb_drones / 2 else second, "D" + str(nd + 1)) for nd in range(map.nb_drones)]
+        drones = [Drone(main if nd % 2 == 0 else second, "D" + str(nd + 1)) for nd in range(map.nb_drones)]
 
         Sim.deploy_drones(map, drones, paths)
