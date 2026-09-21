@@ -31,7 +31,10 @@ class MapBuilder:
     def handle_nbdrones(dec: list[str]):
         if len(dec) != 2:
             raise Exception("Invalid nb_drones params")
-        val = int(dec[1])
+        try:
+            val = int(dec[1])
+        except:
+            raise Exception("Invalid nb_drones value type")
         if val < 1:
             raise Exception("Invalid drone number")
         MapBuilder.map.set_nb_drones(val)
