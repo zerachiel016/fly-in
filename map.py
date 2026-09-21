@@ -50,8 +50,10 @@ class Map:
                 raise Exception("end_hub can't be a blocked zone")
             end = True
 
-        if not all(dec[1] != h.name for h in self.hubs.values()):
+        if any(dec[1] == h.name for h in self.hubs.values()):
             raise Exception(f"Duplicate '{dec[1]}' hub name")
+        elif any(int(dec[2]) == h.x and int(dec[3]) == h.y for h in self.hubs.values()):
+            raise Exception(f"Duplicate '{dec[1]}' cords '{dec[2]}, {dec[3]}'")
 
         self.hubs[dec[1]] = Map.Hub(dec[1], int(dec[2]), int(dec[3]), meta, start, end)
 
