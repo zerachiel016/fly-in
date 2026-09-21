@@ -1,9 +1,13 @@
+import sys
+
 try:
     from matplotlib.colors import to_rgb 
     from termcolor import colored
-except:
+except (ImportError, KeyboardInterrupt) as e:
+    if isinstance(e, KeyboardInterrupt):
+        print("User interrupted program amidst import")
+        sys.exit(1)
     print("Missing dependencies: try uv sync")
-    import sys
     sys.exit(1)
 
 class Colors:
